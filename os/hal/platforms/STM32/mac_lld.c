@@ -558,6 +558,11 @@ void mac_lld_release_receive_descriptor(MACReceiveDescriptor *rdp) {
 bool_t mac_lld_poll_link_status(MACDriver *macp) {
   uint32_t maccr, bmsr, bmcr;
 
+#ifdef BOARD_PHY_ALWAYS_LINKED
+  ETH->MACCR |= ETH_MACCR_DM | ETH_MACCR_FES;
+  return macp->link_up = TRUE;
+#endif
+
   maccr = ETH->MACCR;
 
   /* PHY CR and SR registers read.*/
