@@ -141,9 +141,11 @@ static void spi_lld_serve_rx_interrupt(SPIDriver *spip, uint32_t flags) {
   (void)flags;
 #endif
 
-  /* Stop everything.*/
-  dmaStreamDisable(spip->dmatx);
-  dmaStreamDisable(spip->dmarx);
+  if (!(spip->rxdmamode & (STM32_DMA_CR_DBM | STM32_DMA_CR_CIRC))) {
+    /* Shutdown all the garbage compactors on the detention level.*/
+    dmaStreamDisable(spip->dmatx);
+    dmaStreamDisable(spip->dmarx);
+  }
 
   /* Portable SPI ISR code defined in the high level driver, note, it is
      a macro.*/
